@@ -1,14 +1,16 @@
 import sys
 from pathlib import Path
-import argparse
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT_DIR))
+
+import argparse
 import cv2
 
 from app.camera.video_source import VideoSource
 from app.config.settings import settings
 from app.detection.person_detector import PersonDetector
+from app.utils.detection_summary import DetectionSummary
 
 
 def main():
@@ -18,6 +20,11 @@ def main():
         type=str,
         default=settings.VIDEO_SOURCE,
         help="Video source: webcam index, video path, or RTSP URL",
+    )
+    parser.add_argument(
+        "--save-report",
+        action="store_true",
+        help="Save detection summary report to data/reports",
     )
     args = parser.parse_args()
 
@@ -34,6 +41,8 @@ def main():
         person_class_id=settings.YOLO_PERSON_CLASS_ID,
     )
 
+    summary = DetectionSummary(source=args.source)
+
     video.open()
 
     while True:
@@ -44,6 +53,9 @@ def main():
             break
 
         detections = detector.detect(frame)
+
+        summary.update(detections)
+
         frame = detector.draw_detections(frame, detections)
 
         occupancy_count = len(detections)
@@ -56,7 +68,7 @@ def main():
             cv2.FONT_HERSHEY_SIMPLEX,
             0.8,
             (255, 255, 255),
-            2
+            2,
         )
 
         cv2.putText(
@@ -66,7 +78,7 @@ def main():
             cv2.FONT_HERSHEY_SIMPLEX,
             0.8,
             (255, 255, 255),
-            2
+            2,
         )
 
         cv2.imshow("Phase 2 - Person Detection", frame)
@@ -78,10 +90,17 @@ def main():
             )
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
+            print("[INFO] Stopped manually by user.")
             break
 
     video.release()
     cv2.destroyAllWindows()
+
+    if args.save_report:
+        report_path = summary.save_report()
+        print(f"\n[INFO] Detection summary saved: {report_path}")
+    else:
+        summary.print_report()
 
 
 if __name__ == "__main__":
