@@ -19,5 +19,8 @@ class Settings:
     YOLO_CONFIDENCE = float(os.getenv("YOLO_CONFIDENCE", "0.45"))
     YOLO_PERSON_CLASS_ID = int(os.getenv("YOLO_PERSON_CLASS_ID", "0"))
 
+    CAMERA_ID = os.getenv("CAMERA_ID", "CAM_001")
+    OCCUPANCY_EMPTY_THRESHOLD = int(os.getenv("OCCUPANCY_EMPTY_THRESHOLD", "0"))
+    OCCUPANCY_CROWD_THRESHOLD = int(os.getenv("OCCUPANCY_CROWD_THRESHOLD", "5"))
 
 settings = Settings()
