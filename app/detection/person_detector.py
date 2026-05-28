@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-
+from app.utils.box_utils import match_recognition_to_person
 import cv2
 from ultralytics import YOLO
 
@@ -100,5 +100,63 @@ class PersonDetector:
                 (0, 255, 0),
                 2
             )
+    def draw_detections_with_names(self, frame, detections, recognitions):
+        for detection in detections:
+            x1, y1, x2, y2 = detection["bbox"]
+            confidence = detection["confidence"]
+
+            matched_recognition = match_recognition_to_person(
+                person_detection=detection,
+                recognitions=recognitions,
+            )
+
+            if matched_recognition:
+                is_known = matched_recognition["is_known"]
+                similarity = matched_recognition["similarity"]
+
+                if is_known:
+                    name = matched_recognition["name"]
+                    label = f"{name} {similarity:.2f}"
+                    color = (0, 255, 0)
+                else:
+                    label = f"Unknown {similarity:.2f}"
+                    color = (0, 0, 255)
+            else:
+                label = f"Person {confidence:.2f}"
+                color = (0, 255, 255)
+
+            cv2.rectangle(
+                frame,
+                (x1, y1),
+                (x2, y2),
+                color,
+                2,
+            )
+
+            cv2.putText(
+                frame,
+                label,
+                (x1, max(y1 - 10, 20)),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                color,
+                2,
+            )
 
         return frame
+
+    def draw_boxes_only(self, frame, detections):
+        for detection in detections:
+            x1, y1, x2, y2 = detection["bbox"]
+
+            cv2.rectangle(
+                frame,
+                (x1, y1),
+                (x2, y2),
+                (0, 255, 0),
+                2,
+            )
+
+        return frame
+
+        

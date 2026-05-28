@@ -19,8 +19,30 @@ class Settings:
     YOLO_CONFIDENCE = float(os.getenv("YOLO_CONFIDENCE", "0.45"))
     YOLO_PERSON_CLASS_ID = int(os.getenv("YOLO_PERSON_CLASS_ID", "0"))
 
+    YOLO_FRAME_INTERVAL = int(os.getenv("YOLO_FRAME_INTERVAL", "3"))
+   
     CAMERA_ID = os.getenv("CAMERA_ID", "CAM_001")
     OCCUPANCY_EMPTY_THRESHOLD = int(os.getenv("OCCUPANCY_EMPTY_THRESHOLD", "0"))
     OCCUPANCY_CROWD_THRESHOLD = int(os.getenv("OCCUPANCY_CROWD_THRESHOLD", "5"))
 
+    FACE_IMAGE_SIZE = int(os.getenv("FACE_IMAGE_SIZE", "640"))
+    FACE_CROP_PADDING = float(os.getenv("FACE_CROP_PADDING", "0.60"))
+
+    EMPLOYEE_IMAGE_DIR = os.getenv("EMPLOYEE_IMAGE_DIR", "data/employees")
+    PROCESSED_EMPLOYEE_IMAGE_DIR = os.getenv(
+        "PROCESSED_EMPLOYEE_IMAGE_DIR",
+        "data/employees_processed"
+    )
+
+    FACE_DB_DIR = os.getenv("FACE_DB_DIR", "data/face_db")
+    FACE_EMBEDDINGS_PATH = os.getenv(
+        "FACE_EMBEDDINGS_PATH",
+        "data/face_db/face_embeddings.pkl"
+    )
+    FACE_RECOGNITION_THRESHOLD = float(os.getenv("FACE_RECOGNITION_THRESHOLD", "0.45"))
+    
+    FACE_RECOGNITION_INTERVAL = int(os.getenv("FACE_RECOGNITION_INTERVAL", "20"))
+    FACE_DETECTION_SIZE = int(os.getenv("FACE_DETECTION_SIZE", "320"))
+    FACE_RECHECK_INTERVAL = int(os.getenv("FACE_RECHECK_INTERVAL", "150"))
+    
 settings = Settings()
