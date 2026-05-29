@@ -44,5 +44,30 @@ class Settings:
     FACE_RECOGNITION_INTERVAL = int(os.getenv("FACE_RECOGNITION_INTERVAL", "20"))
     FACE_DETECTION_SIZE = int(os.getenv("FACE_DETECTION_SIZE", "320"))
     FACE_RECHECK_INTERVAL = int(os.getenv("FACE_RECHECK_INTERVAL", "150"))
+
+    BATCH_PROCESS_FPS = float(os.getenv("BATCH_PROCESS_FPS", "1"))
+
+    BATCH_OUTPUT_DIR = os.getenv(
+        "BATCH_OUTPUT_DIR",
+        "data/reports/batch"
+    )
+
+    BATCH_SAVE_SCREENSHOTS = os.getenv(
+        "BATCH_SAVE_SCREENSHOTS",
+        "false"
+    ).lower() == "true"
+
+    BATCH_SCREENSHOT_DIR = os.getenv(
+        "BATCH_SCREENSHOT_DIR",
+        "data/screenshots/batch"
+    )
+
+    BATCH_FACE_INTERVAL_SECONDS = float(
+        os.getenv("BATCH_FACE_INTERVAL_SECONDS", "10")
+    )
+
+    BATCH_PROGRESS_INTERVAL_SECONDS = float(
+        os.getenv("BATCH_PROGRESS_INTERVAL_SECONDS", "30")
+    )
     
 settings = Settings()

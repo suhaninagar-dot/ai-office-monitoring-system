@@ -7,7 +7,7 @@ sys.path.insert(0, str(ROOT_DIR))
 import argparse
 import cv2
 import time
-
+from app.tracking.identity_cache import IdentityCache
 from app.camera.video_source import VideoSource
 from app.config.settings import settings
 from app.detection.person_detector import PersonDetector
@@ -114,6 +114,11 @@ def main():
         process_interval_seconds=args.face_worker_interval,
     )
 
+    identity_cache = IdentityCache(
+        ttl_seconds=10.0,
+        iou_threshold=0.25,
+    )
+
     video.open()
     face_worker.start()
 
@@ -144,13 +149,17 @@ def main():
             # These may be from a previous frame, which is okay for demo.
             recognitions = face_worker.get_latest_results()
 
-            occupancy_count = len(last_person_detections)
-
-            frame = person_detector.draw_detections_with_names(
-                frame=frame,
-                detections=last_person_detections,
+            tracked_detections = identity_cache.update(
+                person_detections=last_person_detections,
                 recognitions=recognitions,
             )
+
+            occupancy_count = len(tracked_detections)
+
+            frame = person_detector.draw_detections_with_cached_names(
+                frame=frame,
+                detections=tracked_detections,
+       )
             #frame = face_recognizer.draw_recognitions(frame, recognitions)
 
             elapsed = time.time() - start_time

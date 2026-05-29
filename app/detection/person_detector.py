@@ -100,6 +100,57 @@ class PersonDetector:
                 (0, 255, 0),
                 2
             )
+    
+    def draw_detections_with_cached_names(self, frame, detections):
+        """
+    Draw person boxes using cached identity.
+
+    If identity exists:
+        show employee name continuously.
+    Else:
+        show Person confidence.
+    """
+
+        for detection in detections:
+            x1, y1, x2, y2 = detection["bbox"]
+            confidence = detection["confidence"]
+            identity = detection.get("identity")
+
+            if identity:
+                is_known = identity.get("is_known", False)
+                similarity = identity.get("similarity", 0.0)
+
+                if is_known:
+                    name = identity.get("name", "Known")
+                    label = f"{name} {similarity:.2f}"
+                    color = (0, 255, 0)
+                else:
+                    label = f"Unknown {similarity:.2f}"
+                    color = (0, 0, 255)
+            else:
+                label = f"Person {confidence:.2f}"
+                color = (0, 255, 255)
+
+            cv2.rectangle(
+                frame,
+                (x1, y1),
+                (x2, y2),
+                color,
+                2,
+            )
+
+            cv2.putText(
+                frame,
+                label,
+                (x1, max(y1 - 8, 18)),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.55,
+                color,
+                2,
+            )
+
+        return frame
+    
     def draw_detections_with_names(self, frame, detections, recognitions):
         for detection in detections:
             x1, y1, x2, y2 = detection["bbox"]
